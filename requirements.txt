@@ -4,7 +4,7 @@ Step 1: Run the following command to install the necessary dependancies in VScod
 
 pip install altair solara networkx fuzzytm matplotlib requests clyent defusedxml urllib3 mesa conda-repo-cli
 
-Step 2: Run the code using the following command
+Step 2: Run the simulation using the following command, and open the localhost link provided
 
 solara run src/app.py
 
