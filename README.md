@@ -16,14 +16,3 @@ Key features of the simulation:
 
 This model is an evolving system, and the simulation serves as a testbed to observe complex emergent behaviors in a population of resource-harvesting agents.
 
-## B. How to Run the Simulation
-
-### Installation Steps
-
-Follow the steps below to set up the simulation environment:
-
-1. **Create a Virtual Environment (Optional but recommended)**:
-   - Run the following commands to create and activate a virtual environment:
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate  # On Windows, use .venv\Scripts\activate
