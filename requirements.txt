@@ -1,0 +1,12 @@
+Please note the steps below are intended to be run in VScode.
+
+Step 1: Run the following command to install the necessary dependancies in VScode
+
+pip install altair solara networkx fuzzytm matplotlib requests clyent defusedxml urllib3 mesa conda-repo-cli
+
+Step 2: Run the code using the following command
+
+solara run src/app.py
+
+
+
