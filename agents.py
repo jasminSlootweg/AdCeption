@@ -289,3 +289,4 @@ class Trader(CellAgent):
             self.trade(a)
 
         return
+
