@@ -31,17 +31,17 @@ model_params = {
     "height": 50,
     # Population parameters
     "initial_population": Slider(
-        "Initial Population", value=200, min=50, max=500, step=10
+        "Starting Agents", value=200, min=50, max=500, step=10
     ),
     # Agent endowment parameters
-    "endowment_min": Slider("Min Initial Endowment", value=25, min=5, max=30, step=1),
-    "endowment_max": Slider("Max Initial Endowment", value=50, min=30, max=100, step=1),
+    "endowment_min": Slider("Min Starting Resources", value=25, min=5, max=30, step=1),
+    "endowment_max": Slider("Max Starting Resources", value=50, min=30, max=100, step=1),
     # Metabolism parameters
-    "metabolism_min": Slider("Min Metabolism", value=1, min=1, max=3, step=1),
-    "metabolism_max": Slider("Max Metabolism", value=5, min=3, max=8, step=1),
+    "metabolism_min": Slider("Min Resource Consumption", value=1, min=1, max=3, step=1),
+    "metabolism_max": Slider("Max Resource Consumption", value=5, min=3, max=8, step=1),
     # Vision parameters
-    "vision_min": Slider("Min Vision", value=1, min=1, max=3, step=1),
-    "vision_max": Slider("Max Vision", value=5, min=3, max=8, step=1),
+    "vision_min": Slider("Min Search Radius", value=1, min=1, max=3, step=1),
+    "vision_max": Slider("Max Search Radius", value=5, min=3, max=8, step=1),
     # Trade parameter
     "enable_trade": {"type": "Checkbox", "value": True, "label": "Enable Trading"},
 }
