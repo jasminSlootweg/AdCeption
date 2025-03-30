@@ -32,9 +32,8 @@ class Trader(CellAgent):
         self.vision = vision
         self.prices = []
         self.trade_partners = []
-
-        # Each trader prefers either type 1 or 2 resources (ad categories)
-        self.preference = random.choice([1, 2])
+        self.preference = random.choice([1, 2])  # Preference for content type 1 or 2
+        self.rounds_without_trade = 0  # Track rounds without trade
 
     def get_trader(self, cell):
         """Helper function used in self.trade_with_neighbors()"""
@@ -45,7 +44,9 @@ class Trader(CellAgent):
     def trade_with_neighbors(self):
         """
         Traders will only trade sugar and spice that match their preference.
+        If no trade happens for `preference_switch_threshold` rounds, they switch preference.
         """
+        traded = False  # Track if trade occurs
         for neighbor in self.cell.get_neighborhood(radius=self.vision).agents:
             sugar_type = self.model.grid.sugar_type[neighbor.cell.coordinate]
             spice_type = self.model.grid.spice_type[neighbor.cell.coordinate]
@@ -55,68 +56,47 @@ class Trader(CellAgent):
                 continue  
 
             self.trade(neighbor)
+            traded = True
 
-    def harvest_sugar(self):
-        sugar_available = self.cell.sugar
-        sugar_type = self.model.grid.sugar_type[self.cell.coordinate]  # Get sugar type
+        if traded:
+            self.rounds_without_trade = 0  # Reset counter on trade
+        else:
+            self.rounds_without_trade += 1  # Increment if no trade happens
 
-        # Only harvest if it matches preference
-        if sugar_type == self.preference:
-            self.sugar += sugar_available
+        self.update_preference()
 
-        self.cell.sugar = 0
-
-    def harvest_spice(self):
-        spice_available = self.cell.spice
-        spice_type = self.model.grid.spice_type[self.cell.coordinate]  # Get spice type
-
-        # Only harvest if it matches preference
-        if spice_type == self.preference:
-            self.spice += spice_available
-
-        self.cell.spice = 0
+    def update_preference(self):
+        """Switches preference if the trader has not traded for a specified number of rounds."""
+        if self.rounds_without_trade >= self.model.preference_switch_threshold:
+            self.preference = 2 if self.preference == 1 else 1  # Switch preference
+            self.rounds_without_trade = 0  # Reset counter
 
     def move(self):
-        """
-        Function for trader agent to identify optimal move
-        Traders prefer locations with their preferred resource type.
-        """
-
-        # Identify all possible moves
+        """Traders move towards their preferred resource type."""
         neighboring_cells = [
             cell
             for cell in self.cell.get_neighborhood(self.vision, include_center=True)
             if cell.is_empty
         ]
 
-        # Determine which move maximizes welfare while matching preference
         welfares = []
         for cell in neighboring_cells:
             sugar_type = self.model.grid.sugar_type[cell.coordinate]
             spice_type = self.model.grid.spice_type[cell.coordinate]
 
-            # Only consider cells that match the trader's preference
             if sugar_type == self.preference or spice_type == self.preference:
-                welfares.append(self.calculate_welfare(self.sugar + cell.sugar, self.spice + cell.spice))
+                welfares.append(self.sugar + cell.sugar + self.spice + cell.spice)
             else:
                 welfares.append(-1)  # Low priority if it doesn't match preference
 
         if not welfares:
             return  # No valid move
 
-        # Find highest welfare move
         max_welfare = max(welfares)
-        candidate_indices = [i for i, w in enumerate(welfares) if math.isclose(w, max_welfare)]
+        candidate_indices = [i for i, w in enumerate(welfares) if w == max_welfare]
         candidates = [neighboring_cells[i] for i in candidate_indices]
 
-        # Choose the closest best option
-        min_dist = min(get_distance(self.cell, cell) for cell in candidates)
-        final_candidates = [
-            cell for cell in candidates if math.isclose(get_distance(self.cell, cell), min_dist, rel_tol=1e-02)
-        ]
-
-        # Move to selected cell
-        self.cell = self.random.choice(final_candidates)
+        self.cell = self.random.choice(candidates)
 
     def eat(self):
         """Traders only consume resources that match their preference."""
@@ -134,6 +114,6 @@ class Trader(CellAgent):
         self.spice -= self.metabolism_spice
 
     def maybe_die(self):
-        """Function to remove Traders who have consumed all their preferred sugar or spice."""
-        if self.is_starved():
+        """Removes trader if they run out of both sugar and spice."""
+        if self.sugar <= 0 and self.spice <= 0:
             self.remove()

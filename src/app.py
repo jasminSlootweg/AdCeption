@@ -2,17 +2,13 @@ from mesa.examples.advanced.sugarscape_g1mt.model import SugarscapeG1mt
 from mesa.visualization import Slider, SolaraViz, make_plot_component
 from mesa.visualization.components.matplotlib_components import make_mpl_space_component
 
-
-
 def agent_portrayal(agent):
     return {"marker": "o", "color": "red", "size": 10}
-
 
 propertylayer_portrayal = {
     "sugar": {"color": "blue", "alpha": 0.8, "colorbar": True, "vmin": 0, "vmax": 10},
     "spice": {"color": "red", "alpha": 0.8, "colorbar": True, "vmin": 0, "vmax": 10},
 }
-
 
 sugarscape_space = make_mpl_space_component(
     agent_portrayal=agent_portrayal,
@@ -44,6 +40,10 @@ model_params = {
     "vision_max": Slider("Max Vision", value=5, min=3, max=8, step=1),
     # Trade parameter
     "enable_trade": {"type": "Checkbox", "value": True, "label": "Enable Trading"},
+    # NEW: Preference switching threshold slider
+    "preference_switch_threshold": Slider(
+        "Rounds Before Switching Preference", value=3, min=1, max=10, step=1
+    ),
 }
 
 model = SugarscapeG1mt()
